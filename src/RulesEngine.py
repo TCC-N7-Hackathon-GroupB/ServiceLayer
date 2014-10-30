@@ -14,12 +14,46 @@ def sidedress_window(json_data):
 	phenology = json_data['phenology']
 	start_date = phenology['r5']
 	end_date = phenology['r5.5']
-	metadata = [start_date, end_date]
+	metadata = {
+		"start_date": start_date,
+		"end_date": end_date
+	}
 
 	yield Event(id, metadata)
 
+def weather_event(json_data):
+	"""
+	"""
+	id = 2
 
-_rules = [sidedress_window]
+	precip_values = json_data['precip-mm']['median']
+	available_n_values = json_data['available-n-g_m2']['median']
+
+	day_range = 10
+
+	start_index = 0
+	end_index = start_index + day_range
+	max_index = min(len(precip_values), len(available_n_values))
+
+	while(end_index < max_index):
+		n_loss = available_n_values[end_index] - available_n_values[start_index]
+		precip_sum = sum(precip_values[start_index:end_index])
+
+		if n_loss > 5 and precip_sum > .5:
+			metadata = {
+				"n_loss": n_loss,
+				"precip_sum": precip_sum,
+				"start_index": start_index,
+				"end_index": end_index
+			}
+
+			yield Event(id, metadata)
+
+		start_index += 1
+		end_index += 1
+
+
+_rules = [sidedress_window, weather_event]
 
 def run_rules(json_data):
 	"""

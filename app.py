@@ -8,7 +8,7 @@ from utility import data
 app = Flask(__name__)
 
 converted_data = ConversionEngine.convert(data.test_data)
-events = RulesEngine.run_rules(data.test_data)
+events = RulesEngine.run_rules(converted_data)
 
 @app.route('/')
 def index():
