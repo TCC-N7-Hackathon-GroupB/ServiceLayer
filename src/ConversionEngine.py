@@ -4,6 +4,7 @@ ureg = UnitRegistry()
 Q_ = ureg.Quantity
 
 import re
+import copy
 
 ### Unit converstion
 
@@ -34,7 +35,8 @@ _conversions = [gram_meter_squared_to_lbs_acre]
 def convert(json_data):
 	"""
 	"""
+	json_data_copy = copy.deepcopy(json_data)
 	for conversion in _conversions:
-		conversion(json_data)
+		conversion(json_data_copy)
 
-	return json_data
+	return json_data_copy
