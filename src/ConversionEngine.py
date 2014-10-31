@@ -22,6 +22,13 @@ def gram_meter_squared_to_lbs_acre_unit(value):
 	# preform the conversion and return
 	return g_m2_value.to('pound/acre').magnitude
 
+def degree_cels_to_degree_fahr_unit(value):
+        # create a unit'ed object from the raw value
+        cels_value = value * ureg.degC
+
+	# perform the conversion and return 
+	return cels_value.to(ureg.degF).magnitude 
+
 ### Data Conversion functions
 
 def mm_to_inch(json_data):
@@ -50,7 +57,20 @@ def gram_meter_squared_to_lbs_acre(json_data):
 				json_data[variable][section] = lbs_acre_values
 
 
-_conversions = [gram_meter_squared_to_lbs_acre, mm_to_inch]
+def degree_cels_to_degree_fahr(json_data):
+	"""
+	"""
+	for variable in json_data.keys():
+		if re.match(".*tmax-C.*", variable):
+			#ALL keys that indicate variables in grams per meter^2 to be converted
+			sections = ['lower', 'mean', 'median', 'upper']
+			for section in sections:
+				cels_values = json_data[variable][section]
+				fahr_values = [ degree_cels_to_degree_fahr_unit(cels_value) for cels_value in cels_values]
+				json_data[variable][section] = fahr_values
+
+
+_conversions = [gram_meter_squared_to_lbs_acre, mm_to_inch, degree_cels_to_degree_fahr]
 
 def convert(json_data):
 	"""
