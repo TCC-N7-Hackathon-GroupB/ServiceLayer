@@ -53,6 +53,31 @@ def weather_event(json_data):
 		end_index += 1
 
 
+def stress(json_data):
+	"""
+	"""
+	id = 3
+	stress_values = json_data['crop-n-stress-_']['median']
+
+	index = 0
+
+	while index < len(stress_values):
+		if stress_values[index] < .5:
+			days_of_stress = 0
+			index += 1
+			while stress_values[index] < .5 and index < len(stress_values):
+				days_of_stress += 1
+				index += 1
+
+			if days_of_stress > 6:
+				metadata = {
+					"stress_start": index - days_of_stress - 1,
+					"stress_end": index - 1
+				}
+
+				yield Event(id, metadata)
+
+
 _rules = [sidedress_window, weather_event]
 
 def run_rules(json_data):
