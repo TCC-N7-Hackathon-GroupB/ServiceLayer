@@ -156,7 +156,30 @@ def volatilization(json_data, percentile):
         }
         yield Event(id, metadata)
 
-_rules = [sidedress_window, weather_event, stress, denitrification, volatilization]
+def low_temp(json_data, percentile):
+	"""
+	"""
+	id = 6
+	feb_1_index = 27
+	sept_1_index = 239
+	max_temp_values = json_data['tmax-C'][percentile]
+
+	last_less_52_day = []
+	most_recent_less_52_day = 0;
+	for i in range(len(max_temp_values)):
+		if i == feb_1_index:
+			last_less_52_day.append(most_recent_less_52_day)
+		if max_temp_values[i] < 52:
+			most_recent_less_52_day = i
+
+	for day in most_recent_less_52_day:
+		metadata = {
+			'day': day
+		}
+
+		yield Event(id, metadata)
+
+_rules = [sidedress_window, weather_event, stress, denitrification, volatilization, low_temp]
 
 def run_rules(json_data, percentile):
 	"""
