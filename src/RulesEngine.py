@@ -15,8 +15,8 @@ def sidedress_window(json_data):
 	"""
 	id = 1
 	phenology = json_data['phenology']
-	start_date = phenology['r5']
-	end_date = phenology['r5.5']
+	start_date = phenology['v4']
+	end_date = phenology['v6']
 	metadata = {
 		"start_date": start_date,
 		"end_date": end_date
