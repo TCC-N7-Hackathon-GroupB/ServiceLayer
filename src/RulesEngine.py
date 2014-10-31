@@ -10,7 +10,7 @@ import random
 
 ### Rules functions
 
-def sidedress_window(json_data):
+def sidedress_window(json_data, percentile):
 	"""
 	"""
 	id = 1
@@ -24,13 +24,13 @@ def sidedress_window(json_data):
 
 	yield Event(id, metadata)
 
-def weather_event(json_data):
+def weather_event(json_data, percentile):
 	"""
 	"""
 	id = 2
 
-	precip_values = json_data['precip-mm']['median']
-	available_n_values = json_data['available-n-g_m2']['median']
+	precip_values = json_data['precip-mm'][percentile]
+	available_n_values = json_data['available-n-g_m2'][percentile]
 
 	day_range = 10
 
@@ -63,11 +63,11 @@ def weather_event(json_data):
 		current_interval = current_interval.next
 
 
-def stress(json_data):
+def stress(json_data, percentile):
 	"""
 	"""
 	id = 3
-	stress_values = json_data['crop-n-stress-_']['median']
+	stress_values = json_data['crop-n-stress-_'][percentile]
 
 	index = 0
 
@@ -89,11 +89,11 @@ def stress(json_data):
 		index += 1
 
 
-def denitrification(json_data):
+def denitrification(json_data, percentile):
     """
     """
     id = 4
-    denitrification_values = json_data['denitrification-g_m2_day']['median']
+    denitrification_values = json_data['denitrification-g_m2_day'][percentile]
 
     index = 0
 
@@ -117,11 +117,11 @@ def denitrification(json_data):
                 yield Event(id, metadata)
         index += 1
 
-def volatilization(json_data):
+def volatilization(json_data, percentile):
     """
     """
     id = 5
-    volatilization_values = json_data['volatilization-g_m2_day']['median']
+    volatilization_values = json_data['volatilization-g_m2_day'][percentile]
 
     index = 0
 
@@ -158,12 +158,12 @@ def volatilization(json_data):
 
 _rules = [sidedress_window, weather_event, stress, denitrification, volatilization]
 
-def run_rules(json_data):
+def run_rules(json_data, percentile):
 	"""
 	"""
 	events = {'events': []}
 	for rule in _rules:
-		for event in rule(json_data):
+		for event in rule(json_data, percentile):
 			events['events'].append(event.to_json())
 
 	return events
