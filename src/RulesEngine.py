@@ -41,7 +41,7 @@ def weather_event(json_data):
 	interval_range = Range()
 
 	while(end_index < max_index):
-		n_loss = available_n_values[end_index] - available_n_values[start_index]
+		n_loss = available_n_values[start_index] - available_n_values[end_index]
 		precip_sum = sum(precip_values[start_index:end_index])
 
 		if n_loss > 5 and precip_sum > .5:
@@ -53,7 +53,7 @@ def weather_event(json_data):
 	current_interval = interval_range.head
 	while current_interval:
 		metadata = {
-			"n_loss": available_n_values[current_interval.end] - available_n_values[current_interval.start],
+			"n_loss": available_n_values[current_interval.start] - available_n_values[current_interval.end],
 			"precip_sum": sum(precip_values[current_interval.start:current_interval.end]),
 			"start_day": current_interval.start,
 			"end_day": current_interval.end
