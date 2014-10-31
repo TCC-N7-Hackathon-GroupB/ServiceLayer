@@ -61,7 +61,7 @@ def degree_cels_to_degree_fahr(json_data):
 	"""
 	"""
 	for variable in json_data.keys():
-		if re.match(".*tmax-C.*", variable):
+		if re.match(".*-C.*", variable):
 			#ALL keys that indicate variables in grams per meter^2 to be converted
 			sections = ['lower', 'mean', 'median', 'upper']
 			for section in sections:
