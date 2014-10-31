@@ -110,8 +110,8 @@ def denitrification(json_data, percentile):
             #Formula altered for demo purposes.  Should be > 6
             if days_of_denitrification > 0:
                 metadata = {
-                "denitrification_start": index - days_of_denitrification - 1,
-                "denitrification_end": index - 1
+                "start_day": index - days_of_denitrification - 1,
+                "end_day": index - 1
                 }
 
                 yield Event(id, metadata)
@@ -141,8 +141,8 @@ def volatilization(json_data, percentile):
             if days_of_volatilization > 0:
                 found = 1
                 metadata = {
-                    "volatilization_start": index - days_of_volatilization - 1,
-                    "volatilization_end": index - 1
+                    "start_day": index - days_of_volatilization - 1,
+                    "end_day": index - 1
                 }
 
                 yield Event(id, metadata)
@@ -151,8 +151,8 @@ def volatilization(json_data, percentile):
     if index >= len(volatilization_values) and found == 0:
         ran = random.randint(0, len(volatilization_values) - 1)
         metadata = {
-            "volatilization_start": ran,
-            "volatilization_end": ran + 1
+            "start_day": ran,
+            "end_day": ran + 1
         }
         yield Event(id, metadata)
 
