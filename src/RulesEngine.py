@@ -1,5 +1,6 @@
 # Imports
 from event import Event
+from range import Range, Interval
 import re
 import random
 
@@ -37,22 +38,29 @@ def weather_event(json_data):
 	end_index = start_index + day_range
 	max_index = min(len(precip_values), len(available_n_values))
 
+	interval_range = Range()
+
 	while(end_index < max_index):
 		n_loss = available_n_values[end_index] - available_n_values[start_index]
 		precip_sum = sum(precip_values[start_index:end_index])
 
 		if n_loss > 5 and precip_sum > .5:
-			metadata = {
-				"n_loss": n_loss,
-				"precip_sum": precip_sum,
-				"start_index": start_index,
-				"end_index": end_index
-			}
-
-			yield Event(id, metadata)
+			interval_range.insert(Interval(start_index, end_index))
 
 		start_index += 1
 		end_index += 1
+
+	current_interval = interval_range.head
+	while current_interval:
+		metadata = {
+			"n_loss": available_n_values[current_interval.end] - available_n_values[current_interval.start],
+			"precip_sum": sum(precip_values[current_interval.start:current_interval.end]),
+			"start_day": current_interval.start,
+			"end_day": current_interval.end
+		}
+
+		yield Event(id, metadata)
+		current_interval = current_interval.next
 
 
 def stress(json_data):
@@ -73,8 +81,8 @@ def stress(json_data):
 
 			if days_of_stress > 6:
 				metadata = {
-					"stress_start": index - days_of_stress - 1,
-					"stress_end": index - 1
+					"start_day": index - days_of_stress - 1,
+					"end_day": index - 1
 				}
 
 				yield Event(id, metadata)
