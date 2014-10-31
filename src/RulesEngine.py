@@ -171,13 +171,26 @@ def low_temp(json_data, percentile):
 			last_less_52_day.append(most_recent_less_52_day)
 		if max_temp_values[i] < 52:
 			most_recent_less_52_day = i
+	last_less_52_day.append(most_recent_less_52_day)
 
-	for day in most_recent_less_52_day:
-		metadata = {
-			'day': day
-		}
+	less_50_days = 0
+	i = 0
+	while i < len(max_temp_values):
+		if max_temp_values[i] < 50:
+			less_50_days += 1
+		if less_50_days == 3:
+			metadata = {
+				'day': i
+			}
 
-		yield Event(id, metadata)
+			yield Event(id, metadata)
+			less_50_days = 0
+
+			if i < sept_1_index:
+				i = sept_1_index
+			else:
+				i = len(max_temp_values)
+		i += 1
 
 _rules = [sidedress_window, weather_event, stress, denitrification, volatilization, low_temp]
 
