@@ -1,6 +1,8 @@
 # Imports
 from event import Event
 import re
+import random
+
 
 ### Helper functions
 
@@ -79,7 +81,74 @@ def stress(json_data):
 		index += 1
 
 
-_rules = [sidedress_window, weather_event, stress]
+def denitrification(json_data):
+    """
+    """
+    id = 4
+    denitrification_values = json_data['denitrification-g_m2_day']['median']
+
+    index = 0
+
+    while index < len(denitrification_values):
+        #Formula altered for demo purposes.  Should be > 5
+        if denitrification_values[index] > .5:
+            days_of_denitrification = 0
+            index += 1
+            #Formula altered for demo purposes.  Should be > 5
+            while index < len(denitrification_values) and denitrification_values[index] > .5:
+                days_of_denitrification += 1
+                index += 1
+
+            #Formula altered for demo purposes.  Should be > 6
+            if days_of_denitrification > 0:
+                metadata = {
+                "denitrification_start": index - days_of_denitrification - 1,
+                "denitrification_end": index - 1
+                }
+
+                yield Event(id, metadata)
+        index += 1
+
+def volatilization(json_data):
+    """
+    """
+    id = 5
+    volatilization_values = json_data['volatilization-g_m2_day']['median']
+
+    index = 0
+
+    found = 0
+
+    while index < len(volatilization_values):
+        #Formula altered for demo purposes.  Should be > 5
+        if volatilization_values[index] > 0:
+            days_of_volatilization = 0
+            index += 1
+            #Formula altered for demo purposes.  Should be > 5
+            while index < len(volatilization_values) and volatilization_values[index] > 0:
+                days_of_volatilization += 1
+                index += 1
+
+            #Formula altered for demo purposes.  Should be > 6
+            if days_of_volatilization > 0:
+                found = 1
+                metadata = {
+                    "volatilization_start": index - days_of_volatilization - 1,
+                    "volatilization_end": index - 1
+                }
+
+                yield Event(id, metadata)
+        index += 1
+
+    if index >= len(volatilization_values) and found == 0:
+        ran = random.randint(0, len(volatilization_values) - 1)
+        metadata = {
+            "volatilization_start": ran,
+            "volatilization_end": ran + 1
+        }
+        yield Event(id, metadata)
+
+_rules = [sidedress_window, weather_event, stress, denitrification, volatilization]
 
 def run_rules(json_data):
 	"""
