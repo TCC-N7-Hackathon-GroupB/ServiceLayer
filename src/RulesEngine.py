@@ -65,7 +65,7 @@ def stress(json_data):
 		if stress_values[index] < .5:
 			days_of_stress = 0
 			index += 1
-			while stress_values[index] < .5 and index < len(stress_values):
+			while index < len(stress_values) and stress_values[index] < .5:
 				days_of_stress += 1
 				index += 1
 
@@ -76,9 +76,10 @@ def stress(json_data):
 				}
 
 				yield Event(id, metadata)
+		index += 1
 
 
-_rules = [sidedress_window, weather_event]
+_rules = [sidedress_window, weather_event, stress]
 
 def run_rules(json_data):
 	"""
